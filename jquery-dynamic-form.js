@@ -295,7 +295,7 @@ $.fn.dynamicForm = function (plusSelector, minusSelector, options){
 			}
 		});
 		if (typeof options.afterClone === "function") {
-			options.afterClone(clone);
+			options.afterClone(elmnt);
 		}
 	}
 	
