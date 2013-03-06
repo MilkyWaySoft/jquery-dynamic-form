@@ -18,7 +18,7 @@
  * @see Author's Blog : http://sroucheray.org
  * @see Follow author : http://twitter.com/sroucheray
  * @extends jQuery (requires at version >= 1.4)
- * @version 1.0.3
+ * @version 1.0.4
  */
 (function($){
 /**
@@ -27,6 +27,7 @@
  * @param {Object} options Optional object, can contain any of the parameters below : 
  *     limit      {Number}   : maximum number of duplicate fields authorized
  *     formPrefix {String}   : the prefix used to identify a form (if not defined will use normalized source selector)
+ *     beforeClone {Function} : a callback function called before a duplication is done
  *     afterClone {Function} : a callback function called as soon as a duplication is done,
  *       this is useful for custom insertion (you can insert the duplicate anywhere in the DOM), 
  *       inserting specific validation on cloned field
@@ -57,10 +58,10 @@ $.fn.dynamicForm = function (plusSelector, minusSelector, options){
 	formPrefix;
 	
 	// Set plus and minus elements within sub dynamic form clones
-	if(options.internalSubDynamicForm){
+	if(options.internalSubDynamicForm) {
 		minus = $(options.internalContainer).find(minusSelector);
 		plus = $(options.internalContainer).find(plusSelector);
-	}else{	//Set normal plus an minus element
+	} else {	//Set normal plus an minus element
 		minus = $(minusSelector);
 		plus = $(plusSelector);
 	}
@@ -78,10 +79,9 @@ $.fn.dynamicForm = function (plusSelector, minusSelector, options){
 		var clone, callBackReturn;
 		clone = template.cloneWithAttribut(true);
 		
-		if (typeof options.afterClone === "function") {
-			callBackReturn = options.afterClone(clone);
+		if (typeof options.beforeClone === "function") {
+			callBackReturn = options.beforeClone(clone);
 		}
-		
 		if(callBackReturn || typeof callBackReturn == "undefined"){
 			clone.insertAfter(clones[clones.length - 1] || source);
 		}
@@ -106,10 +106,10 @@ $.fn.dynamicForm = function (plusSelector, minusSelector, options){
 	 * On cloning make the form under the clone dynamic
 	 * @param {Object} clone
 	 */
-	function dynamiseSubClones(clone){
-		$(subDynamicForm).each(function(){
+	function dynamiseSubClones(clone) {
+		$(subDynamicForm).each(function() {
 			var plus = this.getPlusSelector(), minus = this.getMinusSelector(), options = this.getOptions(), selector = this.selector;
-			clone.find(this.selector).each(function(){
+			clone.find(this.selector).each(function() {
 				options = $.extend(
 					{
 						internalSubDynamicForm:true, 
@@ -294,6 +294,9 @@ $.fn.dynamicForm = function (plusSelector, minusSelector, options){
 				that.attr("id", newIdAttr);
 			}
 		});
+		if (typeof options.afterClone === "function") {
+			options.afterClone(clone);
+		}
 	}
 	
 	function normalizeSubClone(elmnt, formPrefix, index){
