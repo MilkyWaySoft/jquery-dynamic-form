@@ -75,14 +75,14 @@ $.fn.dynamicForm = function (plusSelector, minusSelector, options){
 	 * Clone the form template
 	 */
 	function cloneTemplate(disableEffect){
-		var clone, callBackReturn;
-		clone = template.cloneWithAttribut(true);
+		var clone = template.cloneWithAttribut(true);
+		var callbackReturn;
 		
 		if (typeof options.afterClone === "function") {
-			callBackReturn = options.afterClone(clone);
+			callbackReturn = options.afterClone(clone);
 		}
 		
-		if(callBackReturn || typeof callBackReturn == "undefined"){
+		if(callbackReturn || typeof callbackReturn == "undefined"){
 			clone.insertAfter(clones[clones.length - 1] || source);
 		}
 		
