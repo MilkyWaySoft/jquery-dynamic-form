@@ -1,13 +1,53 @@
 (function($){
+
     var methods = {
         init : function( options ) {
             console.log("init:", this);
             return this.each(function() {
+                var template = $(this).cloneWithAttribut(true);
+                var firstClone = $(this);
+
                 var data = $.extend({
+                    template: template,
+                    clones: [firstClone]
                 }, options);
 
                 $(this).data('dynamicForm', data);
             });
+        },
+
+        add: function(disableEffect) {
+            var data = $(this).data('dynamicForm');
+
+            var clones = data.clones;
+            var template = data.template;
+
+            var clone = template.cloneWithAttribut(true);
+            var callbackReturn;
+
+            if (typeof data.afterClone === "function") {
+                callbackReturn = data.afterClone(clone);
+            }
+
+            if(callbackReturn || typeof callbackReturn == "undefined") {
+                clone.insertAfter(clones[clones.length - 1]);
+            }
+
+            /* Normalize template id attribute */
+            if (clone.attr("id")) {
+                clone.attr("id", clone.attr("id") + clones.length);
+            }
+
+            if (clone.effect && data.createColor && !disableEffect) {
+                clone.effect("highlight", {color: data.createColor}, data.duration);
+            }
+
+            clones.push(clone);
+
+            return clone;
+        },
+
+        remove: function() {
         },
 
         inject: function(data) {
