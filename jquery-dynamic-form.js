@@ -62,6 +62,27 @@
 
             clones.push(clone);
 
+            clone.find(data.plusSelector).click({clone: clone, master: $this}, function(event) {
+		event.preventDefault();
+
+                var master = event.data.master;
+                var clone = event.data.clone;
+
+                master.dynamicForm('add', {addAfter: clone});
+
+                return false;
+            })
+
+            clone.find(data.minusSelector).click({clone: clone, master: $this}, function(event) {
+                event.preventDefault();
+
+                var master = event.data.master;
+                var clone = event.data.clone;
+
+                master.dynamicForm('remove', {clone: clone});
+
+                return false;
+            })
             return clone;
         },
 
