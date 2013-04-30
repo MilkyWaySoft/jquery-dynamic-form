@@ -86,7 +86,28 @@
             return clone;
         },
 
-        remove: function() {
+        remove: function(options) {
+            options = options || {};
+
+            var $this = $(this);
+            var data = $this.data('dynamicForm');
+
+            // I'm keeping data.clones broken out here to be explicit
+            var clone = options.clone || data.clones[data.clones.length - 1]
+            if(clone == undefined) {
+                return false;
+            }
+
+            // We need to make sure we're assigning clones back into data
+            data.clones = $.grep(data.clones, function(value) {
+                // XXX: Is there a better way to do this?
+                var unwrappedClone = $(clone).get(0);
+                var unwrappedValue = $(value).get(0);
+                return unwrappedClone != unwrappedValue;
+            })
+            clone.remove();
+
+            return true;
         },
 
         inject: function(data) {
