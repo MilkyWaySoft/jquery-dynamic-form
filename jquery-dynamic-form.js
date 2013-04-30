@@ -27,9 +27,16 @@
             });
         },
 
-        add: function(disableEffect) {
-            var data = $(this).data('dynamicForm');
+        add: function(options) {
+            options = options || {};
 
+            var $this = $(this);
+            var disableEffect = options.disableEffect;
+            var addAfter = options.addAfter;
+
+            var data = $this.data('dynamicForm');
+
+            var source = data.source;
             var clones = data.clones;
             var template = data.template;
 
@@ -41,7 +48,7 @@
             }
 
             if(callbackReturn || typeof callbackReturn == "undefined") {
-                clone.insertAfter(clones[clones.length - 1]);
+                clone.insertAfter(addAfter || clones[clones.length - 1] || source);
             }
 
             /* Normalize template id attribute */
