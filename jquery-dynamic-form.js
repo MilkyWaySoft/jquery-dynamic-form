@@ -4,15 +4,17 @@
         init : function( options ) {
             console.log("init:", this);
             return this.each(function() {
-                var template = $(this).cloneWithAttribut(true);
-                var firstClone = $(this);
+                var $this = $(this);
+
+                var template = $this.cloneWithAttribut(true);
 
                 var data = $.extend({
+                    source: this,
                     template: template,
-                    clones: [firstClone]
+                    clones: []
                 }, options);
 
-                $(this).data('dynamicForm', data);
+                $this.data('dynamicForm', data);
             });
         },
 

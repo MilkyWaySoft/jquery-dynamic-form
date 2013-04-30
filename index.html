@@ -43,8 +43,8 @@ span.inline{
         <script type="text/javascript">
 $(document).ready(function(){
     var mainDynamicForm = $("#people").dynamicForm({
-        plus: "#plus",
-        minus: "#minus",
+        plusSelector: "#plus",
+        minusSelector: "#minus",
         limit:5,
         formPrefix:"mainForm",
         afterClone:function(clone){
@@ -57,14 +57,14 @@ $(document).ready(function(){
 
     //Activate two nested dynamic form
     $("#phone1").dynamicForm( {
-        plus: "#phone1plus",
-        minus: "#phone1minus",
+        plusSelector: "#phone1plus",
+        minusSelector: "#phone1minus",
         limit:5,
         formPrefix:"mainPhone"});
 
     var a = $("#phone2container").dynamicForm({
-        plus: "#phone2plus",
-        minus: "#phone2minus",
+        plusSelector: "#phone2plus",
+        minusSelector: "#phone2minus",
         limit:5,
         createColor:"red"
     })
