@@ -56,13 +56,13 @@ $(document).ready(function(){
     });
 
     //Activate two nested dynamic form
-    $("#phone1").dynamicForm( {
+    $("#phone1container").dynamicForm({
         plusSelector: "#phone1plus",
         minusSelector: "#phone1minus",
         limit:5,
         formPrefix:"mainPhone"});
 
-    var a = $("#phone2container").dynamicForm({
+    $("#phone2container").dynamicForm({
         plusSelector: "#phone2plus",
         minusSelector: "#phone2minus",
         limit:5,
@@ -129,6 +129,7 @@ $(document).ready(function(){
     // mainDynamicForm.dynamicForm("inject", data);
 
     // Just for testing element clone functionality now
+    $("#phone1container").dynamicForm('add');
     $("#phone2container").dynamicForm('add');
     $("#phone2container").dynamicForm('add');
 });
