@@ -15,6 +15,15 @@
                 }, options);
 
                 $this.data('dynamicForm', data);
+
+                var plus = $this.find(data.plusSelector)
+                var minus = $this.find(data.minusSelector)
+                minus.hide();
+                plus.click(function() {
+                    event.preventDefault();
+                    $this.dynamicForm('add', {addAfter: $this});
+                    return false;
+                })
             });
         },
 
