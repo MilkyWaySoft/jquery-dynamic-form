@@ -9,6 +9,8 @@
                 var template = $this.cloneWithAttribut(true);
 
                 var data = $.extend({
+                    externalPlus: false,
+                    externalMinus: false,
                     source: this,
                     template: template,
                     clones: []
@@ -18,10 +20,37 @@
 
                 var plus = $this.find(data.plusSelector)
                 var minus = $this.find(data.minusSelector)
+
+                if(plus.get(0) == undefined) {
+                    plus = $(data.plusSelector);
+                    data.externalPlus = true;
+                }
+
+                if(minus.get(0) == undefined) {
+                    minus = $(data.minusSelector);
+                    data.externalMinus = true;
+                }
+                // XXX: This section looks pretty nasty, but I don't really know the best way to fix it.
                 minus.hide();
-                plus.click(function() {
+                minus.click({master: $this}, function(event) {
                     event.preventDefault();
-                    $this.dynamicForm('add', {addAfter: $this});
+
+                    var master = event.data.master;
+                    master.dynamicForm('remove');
+
+                    return false;
+                })
+                plus.click({master: $this}, function(event) {
+                    event.preventDefault();
+
+                    var master = event.data.master;
+                    var addAfter = master;
+
+                    if(master.data('dynamicForm').externalPlus) {
+                        addAfter = null; // If this is an external button, we want new clones added at the end
+                    }
+                    master.dynamicForm('add', {addAfter: addAfter});
+
                     return false;
                 })
             });
@@ -83,6 +112,11 @@
 
                 return false;
             })
+
+            if(data.externalMinus) {
+                $(data.minusSelector).show();
+            }
+
             return clone;
         },
 
@@ -106,6 +140,10 @@
                 return unwrappedClone != unwrappedValue;
             })
             clone.remove();
+
+            if(data.clones.length == 0 && data.externalMinus) {
+                $(data.minusSelector).hide();
+            }
 
             return true;
         },
