@@ -11,7 +11,6 @@
         // Note: plus and minus selectors are looked for in the "template" element first,
         //       if they are not found the scope is broadened to the whole document.
         init: function( options ) {
-            console.log("init:", this);
             return this.each(function() {
                 var $this = $(this);
 
