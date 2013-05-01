@@ -219,10 +219,7 @@
                         }
                         $elem.attr('name', _prefix + $elem.attr('dynamicFormName') + index);
                     }
-                })
 
-                $(startElement).children().each(function(i, elem) {
-                    var $elem = $(elem);
                     var _prefix = prefix;
                     if($elem.attr('name') != null) {
                         _prefix = $elem.attr('name');
