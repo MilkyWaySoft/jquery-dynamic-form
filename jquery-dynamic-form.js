@@ -65,6 +65,8 @@
 
                     return false;
                 })
+
+                $this.dynamicForm('reflowFormNames');
             });
         },
 
@@ -123,11 +125,7 @@
                 clones.push(unwrappedClone); // "addAfter" was not specified, stick the new clone at the end
             }
 
-            var dynamicFormCloneIndex = $.inArray(unwrappedClone, clones)
-            if(dynamicFormCloneIndex == -1) {
-                console.error("Clone not in clones array! Unable to get index!")
-            }
-            clone.attr('dynamicFormCloneIndex', dynamicFormCloneIndex + 1); // Offset by one to include the source element
+            $this.dynamicForm('reflowCloneIndexes')
 
             clone.find(data.plusSelector).click({clone: clone, master: $this}, function(event) {
 		event.preventDefault();
@@ -155,6 +153,7 @@
                 $(data.minusSelector).show();
             }
 
+            $this.dynamicForm('reflowFormNames'); // FIXME, performance: This was added as an attempt to standardize the name attribute for all elements in a form.
             return clone;
         },
 
@@ -186,7 +185,19 @@
                 $(data.minusSelector).hide();
             }
 
+            $this.dynamicForm('reflowCloneIndexes');
+
+            $this.dynamicForm('reflowFormNames'); // FIXME, performance: This was added as an attempt to standardize the name attribute for all elements in a form.
             return true;
+        },
+
+        reflowCloneIndexes: function() {
+            var $this = $(this);
+            var data = $this.data('dynamicForm');
+
+            $(data.clones).each(function(i, elem) {
+                $(elem).attr('dynamicFormCloneIndex', i + 1) // Offset by one to include the source element
+            })
         },
 
         // reflowFormNames: Iterate through containing form, overwriting all name attributes.
