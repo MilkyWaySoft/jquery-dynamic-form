@@ -198,7 +198,7 @@
             var $form = $this.parents('form'); // FIXME: What happens if there are nested forms?
 
             var recurseSettingNames = function(startElement, prefix) {
-                $(startElement).children(data.formFields).each(function(i, elem) {
+                $(startElement).children().each(function(i, elem) {
                     var $elem = $(elem);
                     // Ensure that dynamicFormName is preserved before we overwrite name
                     if($elem.attr('dynamicFormName') == undefined) {
@@ -224,7 +224,7 @@
                 $(startElement).children().each(function(i, elem) {
                     var $elem = $(elem);
                     var _prefix = prefix;
-                    if($elem.get(0).tagName == 'FIELDSET' && $elem.attr('name') != null) {
+                    if($elem.attr('name') != null) {
                         _prefix = $elem.attr('name');
                     }
 
