@@ -18,6 +18,7 @@
                 var template = $this.cloneWithAttribut(true);
 
                 var data = $.extend({
+	            formFields: "input, checkbox, select, textarea, fieldset",
                     externalPlus: false,
                     externalMinus: false,
                     source: this,
@@ -186,6 +187,52 @@
             }
 
             return true;
+        },
+
+        // reflowFormNames: Iterate through containing form, overwriting all name attributes.
+        // Note: Given the current state of the world, this is the only way I could think of to build the appropriate form structure.
+        //       I'd much rather a similar method to this, except non-destructive.
+        reflowFormNames: function() {
+            var $this = $(this);
+            var data = $this.data('dynamicForm');
+            var $form = $this.parents('form'); // FIXME: What happens if there are nested forms?
+
+            var recurseSettingNames = function(startElement, prefix) {
+                $(startElement).children(data.formFields).each(function(i, elem) {
+                    var $elem = $(elem);
+                    // Ensure that dynamicFormName is preserved before we overwrite name
+                    if($elem.attr('dynamicFormName') == undefined) {
+                        $elem.attr('dynamicFormName', $elem.attr('name'));
+                    }
+
+                    // If this has a dynamicFormName, let's use it to set name
+                    if($elem.attr('dynamicFormName')) {
+                        var dynamicFormCloneIndex = $elem.attr('dynamicFormCloneIndex')
+                        var index = ''
+                        var _prefix = prefix + '.';
+                        if(prefix == undefined || prefix == '') {
+                            _prefix = '';
+                        }
+
+                        if(dynamicFormCloneIndex != undefined) {
+                            index = '[' + dynamicFormCloneIndex + ']';
+                        }
+                        $elem.attr('name', _prefix + $elem.attr('dynamicFormName') + index);
+                    }
+                })
+
+                $(startElement).children().each(function(i, elem) {
+                    var $elem = $(elem);
+                    var _prefix = prefix;
+                    if($elem.get(0).tagName == 'FIELDSET' && $elem.attr('name') != null) {
+                        _prefix = $elem.attr('name');
+                    }
+
+                    recurseSettingNames($elem, _prefix);
+                })
+            }
+
+            recurseSettingNames($form, "");
         },
 
         // inject: Fill form with data
