@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>New Recipe</title>
+        <link href="lib/jquery/css/ui-lightness/jquery-ui-1.10.2.custom.css" rel="stylesheet">
+        <script src="lib/jquery/jquery-1.9.1.js"></script>
+        <script src="lib/jquery/jquery-ui-1.10.2.custom.js"></script>
+        <script type="text/javascript" src="jquery-dynamic-form.js"></script>
+        <script type="text/javascript">
+$(document).ready(function(){
+    var directions = $('.directions').dynamicForm({
+        plusSelector: '.plus',
+        minusSelector: '.minus',
+    });
+
+    var ingredients = $('.ingredients').dynamicForm({
+        plusSelector: '.plus',
+        minusSelector: '.minus',
+    });
+
+    directions.dynamicForm('inject', {
+        name: "test food",
+        description: "Basic test in order to test things",
+        directions: [
+            "Step 1",
+            "Step 2",
+            "Step 3"
+        ],
+        ingredients: [
+            {
+                name: 'Eggs',
+                quantity: '5',
+                unit: 'eggs',
+                notes: 'Mmm, eggs!'
+            }
+        ]
+    });
+
+})
+        </script>
+    </head>
+    <body>
+        <form action="/" method="POST" >
+            <input name="id" type="hidden" value="" />
+            <dl class=" " id="name_field">
+                <dt><label for="name">Name</label></dt>
+                <dd>
+                    <input type="text" id="name" name="name" value="" >
+                </dd>
+                <dd class="info">Required</dd>
+            </dl>
+            <dl class=" " id="description_field">
+                <dt><label for="description">Description</label></dt>
+                <dd>
+                    <input type="text" id="description" name="description" value="" >
+                </dd>
+                <dd class="info">Required</dd>
+            </dl>
+            <fieldset class="directions" name="directions">
+                <dl class=" " id="directions_0__field">
+                    <dt><label for="directions_0_">Step</label></dt>
+                    <dd>
+                        <input type="text" id="directions_0_" value="" >
+                    </dd>
+                </dl>
+                <a href="" class="plus">[+]</a>
+                <a href="" class="minus">[-]</a>
+            </fieldset>
+            <fieldset class="ingredients" name="ingredients">
+                <dl class="ingredient">
+                    <dl class=" " id="ingredients_0__name_field">
+                        <dt><label for="ingredients_0__name">Name</label></dt>
+                        <dd>
+                            <input type="text" id="ingredients_0__name" name="name" value="" class="ingredient-name">
+                        </dd>
+                    </dl>
+                    <dl class=" " id="ingredients_0__quantity_field">
+                        <dt><label for="ingredients_0__quantity">Quantity</label></dt>
+                        <dd>
+                            <input type="text" id="ingredients_0__quantity" name="quantity" value="" class="ingredient-property">
+                        </dd>
+                    </dl>
+                    <dl class=" " id="ingredients_0__unit_field">
+                        <dt><label for="ingredients_0__unit">Unit</label></dt>
+                        <dd>
+                            <input type="text" id="ingredients_0__unit" name="unit" value="" class="ingredient-property">
+                        </dd>
+                    </dl>
+                    <dl class=" " id="ingredients_0__notes_field">
+                        <dt><label for="ingredients_0__notes">Notes</label></dt>
+                        <dd>
+                            <input type="text" id="ingredients_0__notes" name="notes" value="" class="ingredient-property">
+                        </dd>
+                    </dl>
+                </dl>
+                <a href="" class="plus">[+]</a>
+                <a href="" class="minus">[-]</a>
+            </fieldset>
+            <input type="submit" value="Create Recipe" />
+        </form>
+    </body>
+</html>
+
