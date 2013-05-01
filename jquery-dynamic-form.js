@@ -27,6 +27,8 @@
 
                 $this.data('dynamicForm', data);
 
+                $this.attr('dynamicFormCloneIndex', 0);
+
                 var plus = $this.find(data.plusSelector)
                 var minus = $this.find(data.minusSelector)
 
@@ -119,6 +121,12 @@
             } else {
                 clones.push(unwrappedClone); // "addAfter" was not specified, stick the new clone at the end
             }
+
+            var dynamicFormCloneIndex = $.inArray(unwrappedClone, clones)
+            if(dynamicFormCloneIndex == -1) {
+                console.error("Clone not in clones array! Unable to get index!")
+            }
+            clone.attr('dynamicFormCloneIndex', dynamicFormCloneIndex + 1); // Offset by one to include the source element
 
             clone.find(data.plusSelector).click({clone: clone, master: $this}, function(event) {
 		event.preventDefault();
