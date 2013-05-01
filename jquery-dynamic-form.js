@@ -5,6 +5,8 @@
         // options is an object, containing any of the following keys:
         //   - plusSelector: Selector that can be used to find the "plus" element
         //   - minusSelector: Selector that can be used to find the "minus" element
+        //   - createColor: Color to hilight the new clone with
+        //   - duration: Duration the "create" animation should last
         //
         // Note: plus and minus selectors are looked for in the "template" element first,
         //       if they are not found the scope is broadened to the whole document.
