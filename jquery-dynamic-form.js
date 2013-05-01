@@ -1,7 +1,14 @@
 (function($){
 
     var methods = {
-        init : function( options ) {
+        // init
+        // options is an object, containing any of the following keys:
+        //   - plusSelector: Selector that can be used to find the "plus" element
+        //   - minusSelector: Selector that can be used to find the "minus" element
+        //
+        // Note: plus and minus selectors are looked for in the "template" element first,
+        //       if they are not found the scope is broadened to the whole document.
+        init: function( options ) {
             console.log("init:", this);
             return this.each(function() {
                 var $this = $(this);
@@ -56,6 +63,10 @@
             });
         },
 
+        // add: Add a new field
+        // options is an object, containing any of the following keys:
+        //   - disableEffect: Skip performing any kind of animation (boolean)
+        //   - addAfter: DOM element to add our new clone after
         add: function(options) {
             options = options || {};
 
@@ -136,6 +147,9 @@
             return clone;
         },
 
+        // remove: Remove a clone from a managed dynamicForm
+        // options is an object, containing any of the following keys:
+        //   - clone: Clone to remove. If this field is not present, the last element is removed.
         remove: function(options) {
             options = options || {};
 
@@ -164,15 +178,18 @@
             return true;
         },
 
+        // inject: Fill form with data
+        // data is an object, corresponding to the structure of the form.
+        // The form is traversed, requesting values from the "data" object as needed.
         inject: function(data) {
             console.log("Inject data:", data);
         },
 
+        // destroy: This is a stub, all it does right now is clear out the data object.
+        //          It is unclear what this function should do, or if it should exist at all.
         destroy: function() {
-            var $this = $(this),
-                data = $this.data('dynamicForm');
-
-            data.dynamicForm.remove();
+            var $this = $(this);
+            $this.data('dynamicForm', null);
         }
     };
 
