@@ -274,6 +274,8 @@
                         } else {
                             $elem.val(value);
                         }
+                    } else if($elem.get(0).tagName == "INPUT" && typeof(data) == "string") {
+                        $elem.val(data);
                     } else {
                         recurseFillingData($elem, data);
                     }
