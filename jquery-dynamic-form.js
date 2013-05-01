@@ -70,6 +70,7 @@
             var template = data.template;
 
             var clone = template.cloneWithAttribut(true);
+            var unwrappedClone = $(clone).get(0)
             var callbackReturn;
 
             if (typeof data.afterClone === "function") {
@@ -89,7 +90,22 @@
                 clone.effect("highlight", {color: data.createColor}, data.duration);
             }
 
-            clones.push(clone);
+            // XXX: This can probably be cleaned up
+            var unwrappedAddAfter = $(addAfter).get(0);
+            if(addAfter) {
+                if(unwrappedAddAfter == source) {
+                    clones.splice(0, 0, unwrappedClone); // Add the new clone at the beginning of the array
+                } else {
+                    var addAfterIndex = $.inArray(unwrappedAddAfter, clones);
+                    if(addAfterIndex != -1) { // Add new clone at the index after the index of "addAfter" element
+                        clones.splice(addAfterIndex + 1, 0, unwrappedClone);
+                    } else {
+                        clones.push(unwrappedClone); // Unable to find addAfter element, just stick it on the end
+                    }
+                }
+            } else {
+                clones.push(unwrappedClone); // "addAfter" was not specified, stick the new clone at the end
+            }
 
             clone.find(data.plusSelector).click({clone: clone, master: $this}, function(event) {
 		event.preventDefault();
