@@ -1,37 +1,4 @@
 (function($){
-    var recurseFillingData = function(elem, data) {
-        if(data == undefined) {
-            return false;
-        }
-
-        $(elem).children().each(function(i, elem) {
-            var $elem = $(elem);
-            var dynamicFormName = $elem.attr('dynamicFormName')
-            var value = data[dynamicFormName];
-
-            if(Array.isArray(value) && $elem.data('dynamicForm') != undefined) {
-                $elem.dynamicForm('inject', value);
-
-            } else if(value != null && (Array.isArray(value) || $.isPlainObject(value))) {
-                recurseFillingData($elem, value);
-
-            } else if(value != null) {
-                if($elem.attr('type') == 'checkbox') {
-                    $elem.attr('checked', value?'checked':'');
-
-                } else if($elem.attr('type') == 'radio' && $elem.val() == value) {
-                    $elem.attr('checked', 'checked');
-
-                } else {
-                    $elem.val(value);
-                }
-            } else {
-                recurseFillingData($elem, data);
-            }
-        })
-    }
-
-
     var methods = {
         // init
         // options is an object, containing any of the following keys:
@@ -274,24 +241,61 @@
             recurseSettingNames($form, "");
         },
 
-        // injectForm: Fill form with data
+        // inject: Fill form with data
         // data is an object, corresponding to the structure of the form.
         // The form is traversed, requesting values from the "data" object as needed.
-        injectForm: function(data) {
-            var $form = $(this).parents('form'); // FIXME: What happens if there are nested forms?
-            recurseFillingData($form, data);
-        },
+        // Arguments:
+        //   - data: Object or array containing values. If array, attempt to create enough clones to house the data.
+        //   - target: Which element to start traversal from. If not specified, the containing form is selected.
+        inject: function(data, target) {
+            var recurseFillingData = function(elem, data) {
+                if(data == undefined) {
+                    return false;
+                }
 
-        inject: function(data) {
-            var $this = $(this);
-            var clones = $this.dynamicForm('getAllClones');
-            for(var i = 0; i < data.length - clones.length; i++) {
-                $this.dynamicForm('add', {disableEffect: true});
+                $(elem).children().each(function(i, elem) {
+                    var $elem = $(elem);
+                    var dynamicFormName = $elem.attr('dynamicFormName')
+                    var value = data[dynamicFormName];
+
+                    if(Array.isArray(value) && $elem.data('dynamicForm') != undefined) {
+                        $elem.dynamicForm('inject', value);
+
+                    } else if(value != null && (Array.isArray(value) || $.isPlainObject(value))) {
+                        recurseFillingData($elem, value);
+
+                    } else if(value != null) {
+                        if($elem.attr('type') == 'checkbox') {
+                            $elem.attr('checked', value?'checked':'');
+
+                        } else if($elem.attr('type') == 'radio' && $elem.val() == value) {
+                            $elem.attr('checked', 'checked');
+
+                        } else {
+                            $elem.val(value);
+                        }
+                    } else {
+                        recurseFillingData($elem, data);
+                    }
+                })
             }
-            clones = $this.dynamicForm('getAllClones');
-            $(data).each(function(i, value) {
-                recurseFillingData(clones[i], value);
-            })
+
+            if(Array.isArray(data)) {
+                var $this = $(this);
+                var clones = $this.dynamicForm('getAllClones');
+                for(var i = 0; i < data.length - clones.length; i++) {
+                    $this.dynamicForm('add', {disableEffect: true});
+                }
+                clones = $this.dynamicForm('getAllClones');
+                $(data).each(function(i, value) {
+                    recurseFillingData(clones[i], value);
+                })
+            } else {
+                if(target == undefined) {
+                    target = $(this).parents('form'); // FIXME: What happens if there are nested forms?
+                }
+                recurseFillingData(target, data);
+            }
         },
 
         // destroy: This is a stub, all it does right now is clear out the data object.
