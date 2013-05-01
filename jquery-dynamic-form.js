@@ -210,7 +210,8 @@
                 $(startElement).children().each(function(i, elem) {
                     var $elem = $(elem);
                     // Ensure that dynamicFormName is preserved before we overwrite name
-                    if($elem.attr('dynamicFormName') == undefined) {
+                    // ignoreDynamicFormName is for elements that don't have names of their own, they're just string values in an array or something like that.
+                    if($elem.attr('ignoreDynamicFormName') == undefined && $elem.attr('dynamicFormName') == undefined) {
                         $elem.attr('dynamicFormName', $elem.attr('name'));
                     }
 
@@ -227,6 +228,14 @@
                             index = '[' + dynamicFormCloneIndex + ']';
                         }
                         $elem.attr('name', _prefix + $elem.attr('dynamicFormName') + index);
+
+                    // If there's no dynamicFormName and the tagName is in the listed tags, let's give this element a name.
+                    // In order for this to not get out of control, we also need to set ignoreDynamicFormName on the element.
+                    } else if($.inArray($elem.get(0).tagName, ['INPUT']) != -1) {
+                        if($elem.attr('dynamicFormName') == undefined) {
+                            $elem.attr('ignoreDynamicFormName', 'true');
+                        }
+                        $elem.attr('name', prefix);
                     }
 
                     var _prefix = prefix;
