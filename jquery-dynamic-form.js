@@ -25,12 +25,13 @@
                 var template = $this.cloneWithAttribut(true);
 
                 var data = $.extend({
-					formFields: "input, checkbox, select, textarea, fieldset",
-                    externalPlus: false,
-                    externalMinus: false,
-                    source: this,
-                    template: template,
-                    clones: []
+			formFields: "input, checkbox, select, textarea, fieldset",
+	                externalPlus: false,
+                    	externalMinus: false,
+                    	source: this,
+                    	template: template,
+                    	limit: false,
+                    	clones: []
                 }, options);
 
                 $this.data('dynamicForm', data);
@@ -83,7 +84,7 @@
         //   - addAfter: DOM element to add our new clone after
         add: function(options) {
             options = options || {};
-
+	
             var $this = $(this);
             var disableEffect = options.disableEffect;
             var addAfter = options.addAfter;
@@ -93,74 +94,77 @@
             var source = data.source;
             var clones = data.clones;
             var template = data.template;
+            
+            if (options.limit===false || data.clones.length<options.limit) {
 
-            var clone = template.cloneWithAttribut(true);
-            var unwrappedClone = $(clone).get(0)
-            var callbackReturn;
-
-            if (typeof data.afterClone === "function") {
-                callbackReturn = data.afterClone(clone);
+	            var clone = template.cloneWithAttribut(true);
+	            var unwrappedClone = $(clone).get(0)
+	            var callbackReturn;
+	
+	            if (typeof data.afterClone === "function") {
+	                callbackReturn = data.afterClone(clone);
+	            }
+	
+	            if(callbackReturn || typeof callbackReturn == "undefined") {
+	                clone.insertAfter(addAfter || clones[clones.length - 1] || source);
+	            }
+	
+	            /* Normalize template id attribute */
+	            if (clone.attr("id")) {
+	                clone.attr("id", clone.attr("id") + clones.length);
+	            }
+	
+	            if (clone.effect && data.createColor && !disableEffect) {
+	                clone.effect("highlight", {color: data.createColor}, data.duration);
+	            }
+	
+	            // XXX: This can probably be cleaned up
+	            var unwrappedAddAfter = $(addAfter).get(0);
+	            if(addAfter) {
+	                if(unwrappedAddAfter == source) {
+	                    clones.splice(0, 0, unwrappedClone); // Add the new clone at the beginning of the array
+	                } else {
+	                    var addAfterIndex = $.inArray(unwrappedAddAfter, clones);
+	                    if(addAfterIndex != -1) { // Add new clone at the index after the index of "addAfter" element
+	                        clones.splice(addAfterIndex + 1, 0, unwrappedClone);
+	                    } else {
+	                        clones.push(unwrappedClone); // Unable to find addAfter element, just stick it on the end
+	                    }
+	                }
+	            } else {
+	                clones.push(unwrappedClone); // "addAfter" was not specified, stick the new clone at the end
+	            }
+	
+	            $this.dynamicForm('reflowCloneIndexes')
+	
+	            clone.find(data.plusSelector).click({clone: clone, master: $this}, function(event) {
+					event.preventDefault();
+	
+	                var master = event.data.master;
+	                var clone = event.data.clone;
+	
+	                master.dynamicForm('add', {addAfter: clone});
+	
+	                return false;
+	            })
+	
+	            clone.find(data.minusSelector).click({clone: clone, master: $this}, function(event) {
+	                event.preventDefault();
+	
+	                var master = event.data.master;
+	                var clone = event.data.clone;
+	
+	                master.dynamicForm('remove', {clone: clone});
+	
+	                return false;
+	            })
+	
+	            if (data.externalMinus) {
+	                $(data.minusSelector).show();
+	            }
+	
+	            $this.dynamicForm('reflowFormNames'); // FIXME, performance: This was added as an attempt to standardize the name attribute for all elements in a form.
             }
-
-            if(callbackReturn || typeof callbackReturn == "undefined") {
-                clone.insertAfter(addAfter || clones[clones.length - 1] || source);
-            }
-
-            /* Normalize template id attribute */
-            if (clone.attr("id")) {
-                clone.attr("id", clone.attr("id") + clones.length);
-            }
-
-            if (clone.effect && data.createColor && !disableEffect) {
-                clone.effect("highlight", {color: data.createColor}, data.duration);
-            }
-
-            // XXX: This can probably be cleaned up
-            var unwrappedAddAfter = $(addAfter).get(0);
-            if(addAfter) {
-                if(unwrappedAddAfter == source) {
-                    clones.splice(0, 0, unwrappedClone); // Add the new clone at the beginning of the array
-                } else {
-                    var addAfterIndex = $.inArray(unwrappedAddAfter, clones);
-                    if(addAfterIndex != -1) { // Add new clone at the index after the index of "addAfter" element
-                        clones.splice(addAfterIndex + 1, 0, unwrappedClone);
-                    } else {
-                        clones.push(unwrappedClone); // Unable to find addAfter element, just stick it on the end
-                    }
-                }
-            } else {
-                clones.push(unwrappedClone); // "addAfter" was not specified, stick the new clone at the end
-            }
-
-            $this.dynamicForm('reflowCloneIndexes')
-
-            clone.find(data.plusSelector).click({clone: clone, master: $this}, function(event) {
-				event.preventDefault();
-
-                var master = event.data.master;
-                var clone = event.data.clone;
-
-                master.dynamicForm('add', {addAfter: clone});
-
-                return false;
-            })
-
-            clone.find(data.minusSelector).click({clone: clone, master: $this}, function(event) {
-                event.preventDefault();
-
-                var master = event.data.master;
-                var clone = event.data.clone;
-
-                master.dynamicForm('remove', {clone: clone});
-
-                return false;
-            })
-
-            if (data.externalMinus) {
-                $(data.minusSelector).show();
-            }
-
-            $this.dynamicForm('reflowFormNames'); // FIXME, performance: This was added as an attempt to standardize the name attribute for all elements in a form.
             return clone;
         },
 
